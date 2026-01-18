@@ -1,6 +1,6 @@
 {
   "name": "grr-gaggiuino-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for Gaggiuino espresso machine monitoring and control - get shot data, machine status, and manage brewing profiles",
   "type": "module",
   "main": "dist/index.js",
