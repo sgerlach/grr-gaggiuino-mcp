@@ -20,7 +20,25 @@ Monitor your machine, analyze shots, and manage brewing profiles from any MCP-co
 - Node.js 18+
 - A Gaggiuino-modified espresso machine on your local network
 
-### Setup
+### Option 1: npx (easiest)
+
+No install needed - just configure Claude Desktop to use npx:
+
+```json
+{
+  "mcpServers": {
+    "gaggiuino": {
+      "command": "npx",
+      "args": ["grr-gaggiuino-mcp"],
+      "env": {
+        "GAGGIUINO_BASE_URL": "http://YOUR_GAGGIUINO_IP"
+      }
+    }
+  }
+}
+```
+
+### Option 2: Clone and Build
 
 ```bash
 git clone https://github.com/sgerlach/grr-gaggiuino-mcp.git
@@ -72,17 +90,79 @@ npm run inspect
 GAGGIUINO_BASE_URL=http://YOUR_IP npm start
 ```
 
-## Example Usage
+## Example Workflows
 
+### Quick Status Check
 ```
-You: "What's my machine doing?"
-→ get_status returns temp, pressure, active profile, etc.
+You: "Is my machine ready to pull a shot?"
+→ get_status: temp 93°C (target 93°C), pressure stable, water level 85%
+```
 
-You: "Show me my last shot"
-→ get_shot returns full shot data with time-series curves
+### Dialing In a New Coffee
+```
+You: "I have a new bag of coffee - Ethiopian Yirgacheffe, light roast,
+      tasting notes of blueberry and citrus. It's 10 days off roast.
+      What profile should I start with?"
 
-You: "That shot was sour and thin, what should I change?"
-→ Analyzes the shot data and recommends grind/profile adjustments
+→ LLM recommends a profile based on the coffee characteristics
+
+You: "OK I pulled the shot, analyze it"
+→ get_shot returns pressure/flow/temp curves
+
+You: "It tasted sour and watery"
+→ LLM analyzes the shot data against your taste feedback:
+   "The pressure ramped too quickly and flow was high (4.2 ml/s).
+    Try grinding 2 steps finer. The 6:1 ratio in 24s suggests
+    under-extraction - aim for 28-32s."
+
+You: "Pulled another shot after adjusting"
+→ get_shot for the new shot
+→ "Much better - pressure curve is smoother, 2.8 ml/s flow.
+    How did it taste?"
+```
+
+### Shot Analysis & Troubleshooting
+```
+You: "My shots have been channeling lately, look at my last few shots"
+→ get_shot (latest), get_shot (id: previous)
+→ LLM identifies pressure spikes/instability indicating channeling
+
+You: "Compare this shot to yesterday's good one"
+→ Side-by-side analysis of shot curves
+```
+
+### Profile Management
+```
+You: "What profiles do I have?"
+→ get_profiles lists all available profiles
+
+You: "Switch to my low-pressure blooming profile"
+→ select_profile activates it
+
+You: "Pull a shot and tell me if this profile works for my current beans"
+→ get_shot + analysis based on bean characteristics you've shared
+```
+
+### Iterative Dial-In Session
+```
+You: "Let's dial in this coffee. Medium-dark Brazilian, chocolate/nutty,
+      for milk drinks. 18g dose, targeting 36g out."
+
+→ LLM suggests starting parameters and profile
+
+[Pull shot 1]
+You: "Done, check it"
+→ get_shot → "23 seconds, slightly fast. Bitter finish suggests
+   over-extraction at the end despite short time - likely channeling.
+   Grind 1 step finer and improve puck prep."
+
+[Pull shot 2]
+You: "Better prep this time"
+→ get_shot → "27 seconds, smooth pressure curve. How's the taste?"
+
+You: "Really good! Balanced, nice chocolate, good body for a cortado"
+→ "Great - this is your baseline. Shot data saved.
+    Current recipe: 18g → 36g in 27s, Profile: X"
 ```
 
 ## Unit Conversions
