@@ -1,0 +1,78 @@
+{
+  "dxt_version": "0.1",
+  "name": "grr-gaggiuino-mcp",
+  "version": "1.0.0",
+  "display_name": "Gaggiuino Espresso Tools",
+  "description": "MCP server for Gaggiuino-modified espresso machines. Monitor machine status, analyze shot data with time-series curves, and manage brewing profiles.",
+  "long_description": "Connect any MCP client to your Gaggiuino-modified espresso machine. Get real-time machine status (temperature, pressure, weight), retrieve detailed shot data with time-series curves for analysis, list and select brewing profiles. Perfect for shot analysis, dial-in recommendations, and understanding your espresso extraction.",
+  "author": {
+    "name": "Scott Gerlach",
+    "url": "https://github.com/sgerlach"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgerlach/grr-gaggiuino-mcp"
+  },
+  "homepage": "https://github.com/sgerlach/grr-gaggiuino-mcp",
+  "keywords": [
+    "espresso",
+    "coffee",
+    "gaggiuino",
+    "iot",
+    "smart home"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "GAGGIUINO_BASE_URL": "${user_config.gaggiuino_url}",
+        "REQUEST_TIMEOUT": "${user_config.request_timeout}"
+      }
+    }
+  },
+  "user_config": {
+    "gaggiuino_url": {
+      "type": "string",
+      "title": "Gaggiuino URL",
+      "description": "The URL of your Gaggiuino machine (e.g., http://192.168.1.100 or http://gaggiuino.local)",
+      "default": "http://192.168.3.248",
+      "required": true
+    },
+    "request_timeout": {
+      "type": "string",
+      "title": "Request Timeout",
+      "description": "API request timeout in milliseconds",
+      "default": "5000",
+      "required": false
+    }
+  },
+  "tools": [
+    {
+      "name": "get_status",
+      "description": "Get real-time Gaggiuino espresso machine status including: current/target temperature (Celsius), pressure (bar), scale weight (grams), water tank level (%), whether brewing or steaming is active, and the currently selected profile name and ID."
+    },
+    {
+      "name": "get_shot",
+      "description": "Retrieve detailed shot data with time-series curves for analysis. Returns pressure (bar), flow rate (ml/s), temperature (C), weight (g), and target values over time. Includes the profile used and shot duration. Omit ID to get the most recent shot, or specify a shot ID for historical data."
+    },
+    {
+      "name": "get_profiles",
+      "description": "List all available brewing profiles stored on the Gaggiuino. Returns profile IDs, names, and which one is currently selected. Use this to see available profiles before selecting one."
+    },
+    {
+      "name": "select_profile",
+      "description": "Activate a brewing profile by its ID. The machine will use this profile for the next shot. Get available profile IDs using get_profiles first."
+    }
+  ],
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "node": ">=18"
+    }
+  }
+}

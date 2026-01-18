@@ -1,0 +1,55 @@
+{
+  "name": "grr-gaggiuino-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Gaggiuino espresso machine monitoring and control - get shot data, machine status, and manage brewing profiles",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "grr-gaggiuino-mcp": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgerlach/grr-gaggiuino-mcp.git"
+  },
+  "homepage": "https://github.com/sgerlach/grr-gaggiuino-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/sgerlach/grr-gaggiuino-mcp/issues"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist",
+    "pack": "npm run build && mcpb pack"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "gaggiuino",
+    "espresso",
+    "coffee",
+    "iot",
+    "smart-home",
+    "brewing",
+    "shot-analysis"
+  ],
+  "author": "Scott Gerlach <sgerlach@github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "manifest.json"
+  ]
+}
